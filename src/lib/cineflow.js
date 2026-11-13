@@ -125,7 +125,7 @@ export async function refreshAccessToken() {
           return true;
         }
       }
-      console.warn('[CineFlow] Refresh token failed:', res.status);
+      console.warn('[CineFlow] Refresh token failed:', res.status, JSON.stringify(json));
       return false;
     } catch (e) {
       console.error('Failed to refresh CineFlow token:', e);
