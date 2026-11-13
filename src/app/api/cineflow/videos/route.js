@@ -1,0 +1,24 @@
+import { NextResponse } from 'next/server';
+import { getVideos } from '@/lib/cineflow';
+
+export async function GET(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const modelId = searchParams.get('model_id');
+    const categoryId = searchParams.get('category_id') || '';
+    const page = Number(searchParams.get('page') || '1');
+    if (!Number.isSafeInteger(page) || page < 1 || page > 10000) {
+      return NextResponse.json({ success: false, error: 'Nomor halaman tidak valid.' }, { status: 400 });
+    }
+
+    if (!modelId) {
+      return NextResponse.json({ success: false, error: 'model_id is required' }, { status: 400 });
+    }
+
+    const data = await getVideos({ modelId, categoryId, page });
+    return NextResponse.json({ success: true, ...data });
+  } catch (error) {
+    console.error('Error fetching videos:', error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
