@@ -1,12 +1,11 @@
 import { normalizeSources } from './playback.js';
 
 const BASE_URL = process.env.CINEFLOW_BASE_URL || 'https://ngintipya2.cineflow.my.id/';
-const INITIAL_REFRESH_TOKEN = 'cf_rt_82of0_DFLbhY8iJ_Svp1-cLPvzo7HqlHH122y4iQa4dBjqkBrMPLaw';
 
 // Persist token & cache state across Next.js route workers and HMR reloads
 const globalState = globalThis.__cineflowState || (globalThis.__cineflowState = {
   currentAccessToken: null,
-  currentRefreshToken: process.env.CINEFLOW_REFRESH_TOKEN || INITIAL_REFRESH_TOKEN,
+  currentRefreshToken: process.env.CINEFLOW_REFRESH_TOKEN || '',
   refreshPromise: null,
   memoryCache: new Map(),
   inFlightRequests: new Map(),
