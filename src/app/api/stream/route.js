@@ -57,10 +57,21 @@ export async function GET(request) {
       headers['Authorization'] = authorization;
     }
 
-    // Forward range header for video seeking support
+    // Forward range header for video seeking support, capped to 2 MB chunks for serverless payload limits
     const range = request.headers.get('range');
     if (range) {
-      headers['Range'] = range;
+      const match = /^bytes=(\d+)-(\d*)$/i.exec(range.trim());
+      if (match) {
+        const start = Number(match[1]);
+        const requestedEnd = match[2] ? Number(match[2]) : null;
+        const maxChunk = 2 * 1024 * 1024;
+        const cappedEnd = requestedEnd !== null
+          ? Math.min(requestedEnd, start + maxChunk - 1)
+          : start + maxChunk - 1;
+        headers['Range'] = `bytes=${start}-${cappedEnd}`;
+      } else {
+        headers['Range'] = range;
+      }
     }
 
     let upstreamResponse;
